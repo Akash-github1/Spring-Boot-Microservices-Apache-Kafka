@@ -26,6 +26,7 @@
 		<tag />
 		<url />
 	</scm>
+	<packaging>jar</packaging>
 	<properties>
 		<java.version>17</java.version>
 		<spring-cloud.version>2023.0.3</spring-cloud.version>
@@ -79,6 +80,7 @@
 		</dependencies>
 	</dependencyManagement>
 	<build>
+		<finalName>deliveryAgent</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
