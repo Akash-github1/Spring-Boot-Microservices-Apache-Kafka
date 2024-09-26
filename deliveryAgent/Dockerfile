@@ -1,16 +1,27 @@
-# Step 1: Use the official OpenJDK base image
-FROM openjdk:17-jdk-slim
+# Step 1: Use a Maven image to build the application
+FROM maven:3.8.5-openjdk-17 AS build
 
-# Step 2: Create a directory to hold the application
+# Step 2: Set working directory in the build stage
 WORKDIR /app
 
-# Step 3: Add the application JAR to the container
-# Replace 'your-microservice.jar' with the actual name of your microservice's jar file
-COPY target/your-microservice.jar /app/deliveryAgent.jar
+# Step 3: Copy the pom.xml and source code to the container
+COPY pom.xml .
+COPY src ./src
 
-# Step 4: Expose the port that your Spring Boot app runs on
-# Update the port based on your microservice configuration (e.g., 8080)
+# Step 4: Build the application to generate the JAR file
+RUN mvn clean package -DskipTests
+
+# Step 5: Use a minimal base image with JDK to run the JAR
+FROM openjdk:17-jdk-slim
+
+# Step 6: Set working directory for the runtime
+WORKDIR /app
+
+# Step 7: Copy the JAR file from the build stage
+COPY --from=build /app/target/deliveryAgent.jar /app/deliveryAgent.jar
+
+# Step 8: Expose the application port (usually 8080 for Spring Boot apps)
 EXPOSE 8080
 
-# Step 5: Run the Spring Boot application
+# Step 9: Run the application
 ENTRYPOINT ["java", "-jar", "/app/deliveryAgent.jar"]
