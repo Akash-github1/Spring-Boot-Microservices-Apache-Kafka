@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: end-user
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: end-user
+  template:
+    metadata:
+      labels:
+        app: end-user
+    spec:
+      containers:
+        - name: end-user
+          image: your-github-username/end-user:latest
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: end-user
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: end-user

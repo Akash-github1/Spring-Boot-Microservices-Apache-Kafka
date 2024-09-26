@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: delivery-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: delivery-agent
+  template:
+    metadata:
+      labels:
+        app: delivery-agent
+    spec:
+      containers:
+        - name: delivery-agent
+          image: your-github-username/delivery-agent:latest
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: delivery-agent
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: delivery-agent
