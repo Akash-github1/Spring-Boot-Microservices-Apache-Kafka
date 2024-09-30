@@ -8,7 +8,7 @@ WORKDIR /kafka
 COPY server.properties zookeeper.properties kafka-server-start.sh zookeeper-server-start.sh ./
 
 # Set executable permissions for the start scripts
-RUN chmod +x kafka-server-start.sh zookeeper-server-start.sh
+RUN #chmod +x kafka-server-start.sh zookeeper-server-start.sh
 
 # Expose ports for Kafka and ZooKeeper
 EXPOSE 9092

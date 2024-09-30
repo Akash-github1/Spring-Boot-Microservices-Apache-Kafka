@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: service-registry
-          image: Akash-github1/service-registry:latest
+          image: image-registry.openshift-image-registry.svc:5000/http-akash-dev/service-registry:latest
           ports:
             - containerPort: 8761
 
