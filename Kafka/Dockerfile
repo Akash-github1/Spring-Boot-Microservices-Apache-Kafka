@@ -15,5 +15,4 @@ EXPOSE 9092
 EXPOSE 2181
 
 # Start ZooKeeper and Kafka when the container starts
-CMD ["./zookeeper-server-start.sh zookeeper.properties & sleep 5"]
-CMD ["./kafka-server-start.sh server.properties"]
+CMD ["sh", "-c", "echo 'Contents of /kafka:'; ls -l ./; ./zookeeper-server-start.sh zookeeper.properties & sleep 5; ./kafka-server-start.sh server.properties"]
