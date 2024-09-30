@@ -16,7 +16,7 @@ spec:
         - name: service-registry
           image: Akash-github1/service-registry:latest
           ports:
-            - containerPort: 8761
+            - containerPort: 8761  # Update to your application's port
 
 ---
 apiVersion: v1
@@ -26,7 +26,22 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    - port: 8761
-      targetPort: 8761
+    - port: 8761          # Change to match your application's port
+      targetPort: 8761    # Ensure the targetPort matches your application
   selector:
     app: service-registry
+
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: service-registry-route
+  namespace: http-akash-dev
+spec:
+  to:
+    kind: Service
+    name: service-registry
+  port:
+    targetPort: 8761      # Ensure this matches the service port
+  tls:
+    termination: edge      # Set TLS termination as needed (edge, passthrough, etc.)
