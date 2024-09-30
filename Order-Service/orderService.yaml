@@ -17,14 +17,6 @@ spec:
           image: Akash-github1/order-service:latest
           ports:
             - containerPort: 8081
-          readinessProbe:
-            httpGet:
-              path: /order  # Adjust this path as needed
-              port: 8081
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
 
 ---
 apiVersion: v1

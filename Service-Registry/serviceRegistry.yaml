@@ -17,14 +17,6 @@ spec:
           image: Akash-github1/service-registry:latest
           ports:
             - containerPort: 8761
-          readinessProbe:
-            httpGet:
-              path: /eureka/apps  # Adjust this path as needed
-              port: 8761
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
 
 
 ---
