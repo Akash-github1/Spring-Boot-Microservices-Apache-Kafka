@@ -15,7 +15,7 @@ import lombok.*;
 public class PaymentConfirmationEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate the ID
+//    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto-generate the ID
     @Column(name = "payment_id", nullable = false, unique = true)
     private String id; // Payment ID (primary key)
 
