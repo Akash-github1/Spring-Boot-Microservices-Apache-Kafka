@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=build /app/target/deliveryAgent.jar /app/deliveryAgent.jar
 
 # Step 8: Expose the application port (usually 8080 for Spring Boot apps)
-EXPOSE 8080
+EXPOSE 8084
 
 # Step 9: Run the application
 ENTRYPOINT ["java", "-jar", "/app/deliveryAgent.jar"]
