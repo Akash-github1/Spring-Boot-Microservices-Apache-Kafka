@@ -21,7 +21,7 @@ WORKDIR /app
 COPY --from=build /app/target/Order-Service.jar /app/Order-Service.jar
 
 # Step 8: Expose the application port (usually 8080 for Spring Boot apps)
-EXPOSE 8080
+EXPOSE 8081
 
 # Step 9: Run the application
 ENTRYPOINT ["java", "-jar", "/app/Order-Service.jar"]
