@@ -30,18 +30,3 @@ spec:
       targetPort: 8761    # Ensure the targetPort matches your application
   selector:
     app: service-registry
-
----
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: service-registry-route
-  namespace: http-akash-dev
-spec:
-  to:
-    kind: Service
-    name: service-registry
-  port:
-    targetPort: 8761      # Ensure this matches the service port
-  tls:
-    termination: edge      # Set TLS termination as needed (edge, passthrough, etc.)
