@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ATDDummy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ATDDummy
+  template:
+    metadata:
+      labels:
+        app: ATDDummy
+    spec:
+      containers:
+        - name: ATDDummy
+          image: Akash-github1/ATDDummy:latest
+          ports:
+            - containerPort: 8081
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ATDDummy
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8085
+      targetPort: 8085
+  selector:
+    app: ATDDummy
