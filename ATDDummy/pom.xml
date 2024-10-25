@@ -62,7 +62,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>Order-Service</finalName>
+		<finalName>ATDDummy</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
