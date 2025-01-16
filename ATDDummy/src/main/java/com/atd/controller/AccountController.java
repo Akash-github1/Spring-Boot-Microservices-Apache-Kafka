@@ -1,71 +1,83 @@
 package com.atd.controller;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.atd.entities.DataSearchModelDTO;
+import com.atd.entities.data_search_model;
+import com.atd.repository.DataSearchRepository;
 
-import com.atd.entities.AccountSearchDTO;
-import com.atd.entities.Accounts;
-import com.atd.repository.AccountSearchRepository;
+import java.util.*;
 
 @RestController
-@RequestMapping("/accounts")
-public class AccountController  {
+@RequestMapping("/data")
+public class AccountController {
 
     @Autowired
-    private AccountSearchRepository accountSearchRepository;
+    private DataSearchRepository dataSearchRepository;
 
     @PostMapping("/search")
-    public ResponseEntity<?> searchAccounts(@RequestBody AccountSearchDTO searchDTO) {
-        // Log the incoming search DTO for debugging
-        System.out.println("Search Criteria: " + searchDTO);
+    public ResponseEntity<?> getMemberInfo(@RequestBody DataSearchModelDTO dataSearchModelDTO) {
+        // Extract fields from DTO
+        String email = dataSearchModelDTO.getEmail();
+        String companyName = dataSearchModelDTO.getCompanyName();
+        String country = dataSearchModelDTO.getCountry();
+        String role = dataSearchModelDTO.getRole();
+        String partyId = dataSearchModelDTO.getPartyId();
+        String includeBranches = dataSearchModelDTO.getIncludeBranches();
 
-        // Search by the criteria provided in the DTO
-        List<Accounts> accounts = accountSearchRepository.findByCriteria(
-//            searchDTO.getPropName(),
-            searchDTO.getPropValue(),
-            searchDTO.getGbids() // Include gbids in the search criteria
-        );
+        // Perform search based on provided fields
+        List<data_search_model> searchedData = dataSearchRepository.findByDynamicCriteria(
+                email, companyName, country, role, partyId, includeBranches);
+        System.out.println("dataSearchModelDTO : " + dataSearchModelDTO);
+        System.out.println("searchedData : " + searchedData);
+        // Transform data for response
+        List<Map<String, Object>> memberInfoList = new ArrayList<>();
+        for (data_search_model data : searchedData) {
+            Map<String, Object> memberInfo = new HashMap<>();
+            memberInfo.put("role", data.getRole());
+            memberInfo.put("region", data.getRegion());
+            memberInfo.put("email", data.getEmail());
+            memberInfo.put("city", data.getCity());
+            memberInfo.put("county", data.getCountry());
+            memberInfo.put("state", data.getState());
+            memberInfo.put("company", data.getCustomer());
+            memberInfo.put("teamName", data.getTeamName() == null ? " " : data.getTeamName());
+            memberInfo.put("jobTitle", null);
+            memberInfo.put("partyId", data.getPartyId());
+            memberInfo.put("teamMemberName", null);
+            memberInfo.put("salesAcctId", null);
+            memberInfo.put("accountName", null);
+            memberInfo.put("includedBranches", data.getIncludedBranches());
+            memberInfo.put("sfdcAccountName", data.getSfdcAccountName());
+            memberInfo.put("sfdcOwner", data.getSfdcOwner());
+            memberInfo.put("sfdcAccountId", data.getSfdcAccountId());
+            memberInfo.put("postalCode", data.getPostalCode());
+            memberInfo.put("gbId", data.getGbIds());
+            memberInfo.put("countryCode", data.getCountryCode());
+            memberInfo.put("coverageLevel", data.getCoverageLevel());
+            memberInfo.put("sgId", data.getSgId());
+            memberInfo.put("sgName", data.getSgName());
+            memberInfo.put("sgProgram", data.getSgProgram());
+            memberInfoList.add(memberInfo);
+        }
 
-        // Prepare the response structure
+        // Build response structure
+        Map<String, Object> dataArea = new HashMap<>();
+        Map<String, Object> acknowledge = new HashMap<>();
+        acknowledge.put("reasonCode", 0);
+        acknowledge.put("reasonMsg", "SUCCESS");
+        acknowledge.put("failureMsg", null);
+
+        Map<String, Object> memberInfoData = new HashMap<>();
+        memberInfoData.put("memberInfo", memberInfoList);
+
+        dataArea.put("acknowledge", acknowledge);
+        dataArea.put("memberInfoData", memberInfoData);
+
         Map<String, Object> response = new HashMap<>();
-        response.put("took", 27);
-        response.put("timed_out", false);
-        
-        Map<String, Object> shards = new HashMap<>();
-        shards.put("total", 1);
-        shards.put("successful", 1);
-        shards.put("skipped", 0);
-        shards.put("failed", 0);
-        response.put("_shards", shards);
-        
-        Map<String, Object> totalHits = new HashMap<>();
-        totalHits.put("value", accounts.size());
-        totalHits.put("relation", "eq");
-        
-        Map<String, Object> hits = new HashMap<>();
-        hits.put("total", totalHits);
-        hits.put("max_score", 1.0); // Adjust as necessary
-        hits.put("hits", accounts);
-        
-        response.put("hits", hits);
-        
-        // Return appropriate response
-        return accounts.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(response);
+        response.put("dataArea", dataArea);
+
+        return ResponseEntity.ok(response);
     }
 }
