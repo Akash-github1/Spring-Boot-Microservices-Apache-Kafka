@@ -23,14 +23,15 @@ public interface DataSearchRepository extends JpaRepository<data_search_model, L
             @Param("role") String role,
             @Param("partyId") String partyId,
             @Param("includeBranches") String includeBranches);
-    
-    
+
     @Query("SELECT a FROM data_search_model a WHERE " +
-            "(:email IS NULL OR a.email = :email) AND " +
-            "(:companyName IS NULL OR a.company = :companyName)")
-    List<data_search_model> getAll(
-            @Param("email") String email,
-            @Param("companyName") String companyName);
+    	       "(:searchQuery IS NULL OR a.email LIKE %:searchQuery% OR " +
+    	       "a.company LIKE %:searchQuery% OR " +
+    	       "a.country LIKE %:searchQuery% OR " +
+    	       "a.role LIKE %:searchQuery% OR " +
+    	       "a.partyId LIKE %:searchQuery% OR " +
+    	       "a.includedBranches LIKE %:searchQuery%)")
+	List<data_search_model> findByDynamicSearchQuery(@Param("searchQuery") String searchQuery);
     
     
 }

@@ -11,7 +11,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/data")
-public class AccountController {
+public class DataSearchController {
 
     @Autowired
     private DataSearchRepository dataSearchRepository;
@@ -19,17 +19,17 @@ public class AccountController {
     @PostMapping("/search")
     public ResponseEntity<?> getMemberInfo(@RequestBody DataSearchModelDTO dataSearchModelDTO) {
         // Extract fields from DTO
-        String email = dataSearchModelDTO.getEmail();
-        String companyName = dataSearchModelDTO.getCompanyName();
-        String country = dataSearchModelDTO.getCountry();
-        String role = dataSearchModelDTO.getRole();
-        String partyId = dataSearchModelDTO.getPartyId();
-        String includeBranches = dataSearchModelDTO.getIncludeBranches();
+//        String email = dataSearchModelDTO.getEmail();
+//        String companyName = dataSearchModelDTO.getCompanyName();
+//        String country = dataSearchModelDTO.getCountry();
+//        String role = dataSearchModelDTO.getRole();
+//        String partyId = dataSearchModelDTO.getPartyId();
+//        String includeBranches = dataSearchModelDTO.getIncludeBranches();
+        String searchQuery = dataSearchModelDTO.getSearchQuery();
 
         // Perform search based on provided fields
-        List<data_search_model> searchedData = dataSearchRepository.findByDynamicCriteria(
-                email, companyName, country, role, partyId, includeBranches);
-        System.out.println("dataSearchModelDTO : " + dataSearchModelDTO);
+        List<data_search_model> searchedData = dataSearchRepository.findByDynamicSearchQuery(searchQuery);
+        System.out.println("dataSearchModelDTO : " + dataSearchModelDTO.getSearchQuery());
         System.out.println("searchedData : " + searchedData);
         // Transform data for response
         List<Map<String, Object>> memberInfoList = new ArrayList<>();
