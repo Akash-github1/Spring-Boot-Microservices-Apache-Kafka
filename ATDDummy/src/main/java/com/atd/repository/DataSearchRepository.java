@@ -2,6 +2,8 @@ package com.atd.repository;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,5 +35,16 @@ public interface DataSearchRepository extends JpaRepository<data_search_model, L
     	       "a.includedBranches LIKE %:searchQuery%)")
 	List<data_search_model> findByDynamicSearchQuery(@Param("searchQuery") String searchQuery);
     
+	
+	@Query("SELECT a FROM data_search_model a WHERE " +
+		       "(:searchQuery IS NULL OR " +
+		       "LOWER(a.email) LIKE LOWER(CONCAT('%', :searchQuery, '%')) OR " +
+		       "LOWER(a.company) LIKE LOWER(CONCAT('%', :searchQuery, '%')) OR " +
+		       "LOWER(a.country) LIKE LOWER(CONCAT('%', :searchQuery, '%')) OR " +
+		       "LOWER(a.role) LIKE LOWER(CONCAT('%', :searchQuery, '%')) OR " +
+		       "LOWER(a.partyId) LIKE LOWER(CONCAT('%', :searchQuery, '%')) OR " +
+		       "LOWER(a.includedBranches) LIKE LOWER(CONCAT('%', :searchQuery, '%')))")
+
+		Page<data_search_model> findByPageSearchQuery(@Param("searchQuery") String searchQuery, Pageable pageable);
     
 }

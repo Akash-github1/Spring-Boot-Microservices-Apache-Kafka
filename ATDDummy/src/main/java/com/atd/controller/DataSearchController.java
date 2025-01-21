@@ -1,6 +1,9 @@
 package com.atd.controller;
 
-import org.springframework.beans.factory.annotation.Autowired; 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.atd.entities.DataSearchModelDTO;
@@ -71,6 +74,75 @@ public class DataSearchController {
 
         Map<String, Object> memberInfoData = new HashMap<>();
         memberInfoData.put("memberInfo", memberInfoList);
+
+        dataArea.put("acknowledge", acknowledge);
+        dataArea.put("memberInfoData", memberInfoData);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("dataArea", dataArea);
+
+        return ResponseEntity.ok(response);
+    }
+    
+    @PostMapping("/pageSearch")
+    public ResponseEntity<?> getMemberInfo(@RequestBody DataSearchModelDTO dataSearchModelDTO,
+                                           @RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size) {
+        System.out.println("dataSearchModelDTO : " + dataSearchModelDTO);
+
+        // Extract fields from DTO
+        String searchQuery = dataSearchModelDTO.getSearchQuery();
+
+        // Create Pageable object
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Perform search with pagination
+        Page<data_search_model> searchedDataPage = dataSearchRepository.findByPageSearchQuery(searchQuery, pageable);
+
+        // Transform data for response
+        List<Map<String, Object>> memberInfoList = new ArrayList<>();
+        for (data_search_model data : searchedDataPage.getContent()) {
+            Map<String, Object> memberInfo = new HashMap<>();
+            memberInfo.put("role", data.getRole());
+            memberInfo.put("region", data.getRegion());
+            memberInfo.put("email", data.getEmail());
+            memberInfo.put("city", data.getCity());
+            memberInfo.put("county", data.getCountry());
+            memberInfo.put("state", data.getState());
+            memberInfo.put("company", data.getCustomer());
+            memberInfo.put("teamName", data.getTeamName() == null ? " " : data.getTeamName());
+            memberInfo.put("jobTitle", null);
+            memberInfo.put("partyId", data.getPartyId());
+            memberInfo.put("teamMemberName", null);
+            memberInfo.put("salesAcctId", null);
+            memberInfo.put("accountName", null);
+            memberInfo.put("includedBranches", data.getIncludedBranches());
+            memberInfo.put("sfdcAccountName", data.getSfdcAccountName());
+            memberInfo.put("sfdcOwner", data.getSfdcOwner());
+            memberInfo.put("sfdcAccountId", data.getSfdcAccountId());
+            memberInfo.put("postalCode", data.getPostalCode());
+            memberInfo.put("gbId", data.getGbIds());
+            memberInfo.put("countryCode", data.getCountryCode());
+            memberInfo.put("coverageLevel", data.getCoverageLevel());
+            memberInfo.put("sgId", data.getSgId());
+            memberInfo.put("sgName", data.getSgName());
+            memberInfo.put("sgProgram", data.getSgProgram());
+            memberInfoList.add(memberInfo);
+        }
+
+        // Build response structure
+        Map<String, Object> dataArea = new HashMap<>();
+        Map<String, Object> acknowledge = new HashMap<>();
+        acknowledge.put("reasonCode", 0);
+        acknowledge.put("reasonMsg", "SUCCESS");
+        acknowledge.put("failureMsg", null);
+
+        Map<String, Object> memberInfoData = new HashMap<>();
+        memberInfoData.put("memberInfo", memberInfoList);
+        memberInfoData.put("totalElements", searchedDataPage.getTotalElements());
+        memberInfoData.put("totalPages", searchedDataPage.getTotalPages());
+        memberInfoData.put("currentPage", searchedDataPage.getNumber());
+        memberInfoData.put("pageSize", searchedDataPage.getSize());
 
         dataArea.put("acknowledge", acknowledge);
         dataArea.put("memberInfoData", memberInfoData);
